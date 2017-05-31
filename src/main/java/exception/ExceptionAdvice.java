@@ -1,0 +1,49 @@
+package exception;
+
+import java.util.Arrays;
+
+import javax.validation.ValidationException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.Signature;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class ExceptionAdvice {
+
+	public ExceptionAdvice() {}
+	
+	// Obtain logger.
+	private static Log logger = LogFactory.getLog(ExceptionAdvice.class);
+
+	/**
+	 * Called between the throw and the catch
+	 */
+	@AfterThrowing(pointcut = "execution(* dao.EmployeeLocationDAOImpl.findByCriteria(..))", throwing = "e")
+	public void AfterThrowing(JoinPoint joinPoint, Throwable e) throws Throwable {
+
+		Signature signature = joinPoint.getSignature();
+		String methodName = signature.getName();
+		String detail = signature.toString();
+		String arguments = Arrays.toString(joinPoint.getArgs());
+		
+ 		if(e instanceof ValidationException)
+		{
+			throw new ValidationException(e);
+		}
+		
+		logger.info(
+				"Exception in method: "
+						+ methodName + " with arguments " + arguments
+						+ "\nDetail: " + detail
+						+ "\nException : " + e.getMessage(), e);
+		
+		throw new Exception(e);
+	}
+}

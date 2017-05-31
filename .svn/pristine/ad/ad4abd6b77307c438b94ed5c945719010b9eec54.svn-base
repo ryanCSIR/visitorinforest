@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:https="http://www.mulesoft.org/schema/mule/https"
+	xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:jersey="http://www.mulesoft.org/schema/mule/jersey"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mule-ss="http://www.mulesoft.org/schema/mule/spring-security"
+	xmlns:ss="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/jersey http://www.mulesoft.org/schema/mule/jersey/current/mule-jersey.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd
+http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/3.1/mule-spring-security.xsd
+http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+	<mule-ss:security-manager>
+		<mule-ss:delegate-security-provider
+			name="memory-provider" delegate-ref="authenticationManager" />
+	</mule-ss:security-manager>
+
+	<spring:beans>
+		<spring:import resource="classpath:/spring4.xml" />
+		<ss:authentication-manager alias="authenticationManager">
+			<ss:authentication-provider>
+				<ss:user-service id="userService">
+					<ss:user name="user" password="password" authorities="ROLE_ADMIN" />
+					<ss:user name="anon" password="anon" authorities="ROLE_ANON" />
+				</ss:user-service>
+			</ss:authentication-provider>
+		</ss:authentication-manager>
+
+		<spring:bean id="Resource" name="Resource" class="rest.Resource" />
+		<ss:global-method-security
+			pre-post-annotations="enabled" jsr250-annotations="enabled" />
+	</spring:beans>
+
+	<http:connector name="HTTP_HTTPS" cookieSpec="netscape"
+		validateConnections="false" sendBufferSize="0" receiveBufferSize="0"
+		receiveBacklog="0" clientSoTimeout="30000" serverSoTimeout="30000"
+		socketSoLinger="0" doc:name="HTTP-HTTPS" keepAlive="true" />
+	<flow name="visitorinfoFlow">
+		<http:inbound-endpoint exchange-pattern="request-response"
+			address="http://mule-test.csir.co.za:8081/api" doc:name="HTTP" connector-ref="HTTP_HTTPS" />
+
+		<jersey:resources doc:name="REST">
+			<component>
+				<spring-object bean="Resource" />
+			</component>
+		</jersey:resources>
+		
+		<object-to-string-transformer mimeType="application/json"
+			doc:name="Object to JSON" />
+		
+		<http:response-builder status="200" contentType="application/json" doc:name="HTTP Response Builder" >
+			<http:header name="Access-Control-Allow-Origin" value="*"/>
+			<http:header name="Access-Control-Allow-Headers" value="Origin, X-Requested-With, Content-Type, Accept"/>            
+        </http:response-builder>
+	</flow>
+</mule>

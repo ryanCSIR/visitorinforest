@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	<tx:annotation-driven transaction-manager="txManager" />
+	<context:annotation-config />
+	<context:component-scan base-package="dao" />
+
+	<bean id="exceptionHandler" class="exception.ExceptionAdvice" />
+
+	<bean
+		class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+	<bean
+		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+
+	<bean id="txManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="Emf" />
+	</bean>
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.OracleDriver" />
+		<property name="url"
+			value="jdbc:oracle:thin:@ln-ora-wf2.csir.co.za:1521:ORAWF2" />
+		<property name="username" value="WFD0000" />
+		<property name="password" value="swaz1Land" />
+		<property name="maxActive" value="50" />
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="300" />
+	</bean>
+
+	<bean id="Emf"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="model" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="database" value="ORACLE" />
+				<property name="showSql" value="true" />
+				<property name="generateDdl" value="false" />
+				<property name="databasePlatform" value="org.hibernate.dialect.OracleDialect" />
+
+			</bean>
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="javax.persistence.validation.mode">none</prop>
+			</props>
+		</property>
+		<property name="jpaPropertyMap">
+			<map>
+				<entry key="hibernate.connection.autocommit" value="true" />
+			</map>
+		</property>
+	</bean>
+	<bean id="em"
+		class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
+		<property name="entityManagerFactory" ref="Emf" />
+	</bean>
+</beans>

@@ -1,0 +1,58 @@
+package rest;
+
+import java.util.List;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
+
+import model.EmployeeLocation;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.sun.jersey.api.json.JSONWithPadding;
+
+import dao.EmployeeLocationDAOImpl;
+
+@Path("/visinfo")
+@Component
+@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
+public class Resource {
+	@Autowired
+	private EmployeeLocationDAOImpl empLocDAO;
+
+	@Context
+	UriInfo uriInfo;
+
+	@GET
+	@Path("/employees")
+	@SuppressWarnings("rawtypes")
+	@Produces({ "application/javascript" })
+	public JSONWithPadding findEmployee(@QueryParam("name") String name,
+			@QueryParam("callback") String callback) throws Exception {
+		List<EmployeeLocation> loc = null;
+		GenericEntity generic = null;
+
+		try {
+			//if (name != null && name.length() >= 2) {
+				loc = empLocDAO.findByCriteria("name", name);
+				generic = new GenericEntity<List<EmployeeLocation>>(loc) {
+				};
+			/*}
+			else {
+				return null;
+			}*/
+				
+		} catch (Exception e) {
+			throw e;
+		}
+		return new JSONWithPadding(generic, callback);
+	}
+}

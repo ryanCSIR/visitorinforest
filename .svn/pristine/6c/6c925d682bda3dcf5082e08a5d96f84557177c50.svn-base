@@ -1,0 +1,148 @@
+package model;
+
+import java.io.Serializable;
+import javax.persistence.*;
+
+
+/**
+ * The persistent class for the WFD0000_LOCATION database table.
+ * 
+ */
+@Entity
+@Table(name="WFD0000_LOCATION")
+public class Location implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Column(name="BU_DESC")
+	private String buDesc;
+
+	@Column(name="BU_ID")
+	private String buId;
+
+	private String building;
+
+	private String coordinates;
+
+	@Column(name="DEPARTMENT_DESC")
+	private String departmentDesc;
+
+	@Column(name="DEPT_ID")
+	private String deptId;
+
+	private String descr;
+
+	@Id
+	@Column(name="EMP_NO")
+	private String empNo;
+
+	@Column(name="\"FLOOR\"")
+	private String floor;
+
+	@Column(name="LAN_USERID")
+	private String lanUserid;
+	
+	@Column(name="NAME")
+	private String name;
+
+	private String office;
+
+	public Location() {
+	}
+
+	public String getBuDesc() {
+		return this.buDesc;
+	}
+
+	public void setBuDesc(String buDesc) {
+		this.buDesc = buDesc;
+	}
+
+	public String getBuId() {
+		return this.buId;
+	}
+
+	public void setBuId(String buId) {
+		this.buId = buId;
+	}
+
+	public String getBuilding() {
+		return this.building;
+	}
+
+	public void setBuilding(String building) {
+		this.building = building;
+	}
+
+	public String getCoordinates() {
+		return this.coordinates;
+	}
+
+	public void setCoordinates(String coordinates) {
+		this.coordinates = coordinates;
+	}
+
+	public String getDepartmentDesc() {
+		return this.departmentDesc;
+	}
+
+	public void setDepartmentDesc(String departmentDesc) {
+		this.departmentDesc = departmentDesc;
+	}
+
+	public String getDeptId() {
+		return this.deptId;
+	}
+
+	public void setDeptId(String deptId) {
+		this.deptId = deptId;
+	}
+
+	public String getDescr() {
+		return this.descr;
+	}
+
+	public void setDescr(String descr) {
+		this.descr = descr;
+	}
+
+	public String getEmpNo() {
+		return this.empNo;
+	}
+
+	public void setEmpNo(String empNo) {
+		this.empNo = empNo;
+	}
+
+	public String getFloor() {
+		return this.floor;
+	}
+
+	public void setFloor(String floor) {
+		this.floor = floor;
+	}
+
+	public String getLanUserid() {
+		return this.lanUserid;
+	}
+
+	public void setLanUserid(String lanUserid) {
+		this.lanUserid = lanUserid;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getOffice() {
+		return this.office;
+	}
+
+	public void setOffice(String office) {
+		this.office = office;
+	}
+
+}

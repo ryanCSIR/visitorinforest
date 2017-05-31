@@ -1,0 +1,13 @@
+package dao;
+
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import model.Location;
+
+@Repository
+public class LocationDAOImpl extends AbstractHibernateDAO<Location> {
+	public LocationDAOImpl() {
+		setClazz(Location.class);
+	}
+}
